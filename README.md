@@ -26,14 +26,6 @@ make
 cd data && sha256sum -c SHA256SUMS
 ```
 
-如果手上有可能包含字符串名称的文件，比如 rawfile 导出目录或者 libgame 的字符串表，可以用 `-n` 加进来，`-n` 可以写多次：
-
-```sh
-./string -o zh.tsv -n rawfile/ -n libgame.strings.tsv data/*.ff.decoded.bin
-```
-
-只用 `data/` 里的包，能找回 1903 条名称；再加上 rawfile、netconststrings 和 libgame 字符串表，能找回 2176 条。
-
 输出文件已经存在时程序会直接报错，不会覆盖。
 
 ## 输出
@@ -61,9 +53,3 @@ key	name	text
 每条文本的头部是 16 个字节：前 8 字节是 key，后 8 字节是文本 ID，其中第 61 位表示文本是否紧跟在后面。很多条目不带文本，只用文本 ID 引用同一个包里前面已经出现过的那句。
 
 key 是名称经过游戏 native 路径 hash 算出来的。hash 前会先转成小写，所以找回来的名称大小写不一定和原始的一样。
-
-## 限制
-
-- 只导出本地化文本（type58）。Lua、GSC、rawfile 里直接写死的字符串不在范围内。
-- 为了跳过排在文本前面的资产，程序还要解析几种别的类型（17、67、74、121）。碰到其他类型时，这个包就读到那里为止。
-- 程序本身不校验输入文件的 hash，请用上面的 `sha256sum -c` 检查。
